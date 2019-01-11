@@ -28,7 +28,7 @@ def login():
     else:
         with open(file, 'w') as f:
             account = input('请输入学号/帐号:\n')
-            password = input('请输入学号/帐号:\n')
+            password = input('请输入密碼:\n')
             f.write(account+'\n')
             f.write(password+'\n')
             return account, password
