@@ -5,8 +5,8 @@ from bs4 import BeautifulSoup
 
 ac, psw = login()
 raw_headers = """POST /0.htm HTTP/1.1
-Host: 172.18.3.3
-Connection: keep-alive
+Host: 172.18.2.2
+Connection: kep-alive
 Content-Length: 67
 Pragma: no-cache
 Cache-Control: no-cache
