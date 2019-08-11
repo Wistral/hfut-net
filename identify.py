@@ -8,7 +8,7 @@ import getpass
 USER_INFO_CONF = 'info.dat'
 
 
-def login(store=True):  # -> str, str
+def login(store=True) -> (str, str):
     """
     get account and password
     It will ask for account and password and stored on first time.
@@ -30,14 +30,14 @@ def login(store=True):  # -> str, str
             return account, password
 
 
-def connect_internet():
+def connect_internet(wired=True):
     """
     connect to Internet from inner school net
     """
     # acqurie account and password
     account, psw = login()
     headers = {
-        'Host': '172.18.2.2',
+        'Host': '172.18.3.3',
         'Connection': 'kep-alive',
         'Content-Length': '67',
         'Pragma': 'no-cache',
@@ -51,7 +51,10 @@ def connect_internet():
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-TW,zh-CN;q=0.9,zh;q=0.8,en-GB;q=0.7,en;q=0.6,ja;q=0.5'
     }
-
+    # if not wired:
+    #     headers['Host'] = '172.18.2.2'
+    #     headers['Origin'] = 'http://172.18.2.2'
+    #     headers['Referer'] = 'http://172.18.2.2/0.htm'
     data = {
         'DDDDD': account,
         'upass': psw,
@@ -64,11 +67,13 @@ def connect_internet():
     msg = res.title.string
     if msg == '登录成功':
         print(msg)
+        return True
     else:
         print('登录失败')
         # clear incorrect info
         with open(USER_INFO_CONF, 'w') as f:
             pass
+        return False
 
 
 if __name__ == "__main__":
