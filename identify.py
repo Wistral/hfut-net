@@ -2,10 +2,25 @@ import requests
 from bs4 import BeautifulSoup
 from os import path
 import getpass
+import subprocess
 
 
 # user-info file name
 USER_INFO_CONF = 'info.dat'
+
+
+def is_connected():
+    """
+    test connectibility to Internet
+    """
+    try:
+        code = subprocess.check_call(['ping', 'baidu.com', '-c 1', '-W 1'],
+                                     stdout=subprocess.PIPE)
+    except subprocess.CalledProcessError:
+        print('catch error!')
+        return False
+        pass
+    return True
 
 
 def login(store=True) -> (str, str):
@@ -18,8 +33,8 @@ def login(store=True) -> (str, str):
     """
     # user info file exists and not empty
     if path.exists(USER_INFO_CONF) and path.getsize(USER_INFO_CONF):
-        with open(USER_INFO_CONF, 'r') as f:
-            ans = [_ for _ in f]
+        with open(USER_INFO_CONF, 'rb') as f:
+            ans = [_.decode().strip('\n') for _ in f]
             return ans[:2]
     else:
         with open(USER_INFO_CONF, 'wb') as f:
@@ -34,6 +49,9 @@ def connect_internet(wired=True):
     """
     connect to Internet from inner school net
     """
+    if is_connected():
+        print('Already connect to Internet!')
+        return True
     # acqurie account and password
     account, psw = login()
     headers = {
@@ -51,10 +69,12 @@ def connect_internet(wired=True):
         'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-TW,zh-CN;q=0.9,zh;q=0.8,en-GB;q=0.7,en;q=0.6,ja;q=0.5'
     }
-    # if not wired:
-    #     headers['Host'] = '172.18.2.2'
-    #     headers['Origin'] = 'http://172.18.2.2'
-    #     headers['Referer'] = 'http://172.18.2.2/0.htm'
+    url = 'http://172.18.3.3/0.htm'
+    if wired:
+        headers['Host'] = '172.18.2.2'
+        headers['Origin'] = 'http://172.18.2.2'
+        headers['Referer'] = 'http://172.18.2.2/0.htm'
+        url = 'http://172.18.2.2/0.htm'
     data = {
         'DDDDD': account,
         'upass': psw,
@@ -62,14 +82,14 @@ def connect_internet(wired=True):
         'v6ip': ''
     }
     # make POST request
-    html = requests.post('http://172.18.3.3/0.htm', headers=headers, data=data)
+    html = requests.post(url, headers=headers, data=data)
     res = BeautifulSoup(html.text, 'lxml')
     msg = res.title.string
     if msg == '登录成功':
-        print(msg)
+        print('login successfully!')
         return True
     else:
-        print('登录失败')
+        print('log in failed! Error message:\n', msg)
         # clear incorrect info
         with open(USER_INFO_CONF, 'w') as f:
             pass
