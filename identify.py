@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from os import path
 import getpass
 import subprocess
+import sys
 
 
 # user-info file name
@@ -17,7 +18,7 @@ def is_connected():
         code = subprocess.check_call(['ping', 'baidu.com', '-c 1', '-W 1'],
                                      stdout=subprocess.PIPE)
     except subprocess.CalledProcessError:
-        print('catch error!')
+#        print('catch error!')
         return False
         pass
     return True
@@ -55,7 +56,7 @@ def connect_internet(wired=True):
     # acqurie account and password
     account, psw = login()
     headers = {
-        'Host': '172.18.3.3',
+        'Host': '172.18.3.3', 
         'Connection': 'kep-alive',
         'Content-Length': '67',
         'Pragma': 'no-cache',
@@ -87,6 +88,13 @@ def connect_internet(wired=True):
     msg = res.title.string
     if msg == '登录成功':
         print('login successfully!')
+        if is_connected():
+            print('network OK!')
+        else:
+            print('network still has problems...')
+            if wired:
+                # try in another way
+                return connect_internet(False)
         return True
     else:
         print('log in failed! Error message:\n', msg)
@@ -97,4 +105,10 @@ def connect_internet(wired=True):
 
 
 if __name__ == "__main__":
-    connect_internet()
+    if len(sys.argv) > 1:
+        if sys.argv[1] == 'wired':
+            connect_internet(True)
+        elif sys.argv[1] == 'wireless':
+            connect_internet(False)
+    else:
+        connect_internet()

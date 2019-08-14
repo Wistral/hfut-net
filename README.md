@@ -3,11 +3,7 @@
 Python scripts to auto-connect to Internet for school net of HFUT of XC
 ### Connect to Internet
 ```sh
-bash hfut.sh
-```
-or
-```sh
-python3 identify.py
+python3 identify.py [wired | wireless]
 ```
 
 ### Set up hotspot
