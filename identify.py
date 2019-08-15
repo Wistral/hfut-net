@@ -4,10 +4,11 @@ from os import path
 import getpass
 import subprocess
 import sys
+import base64
 
 
 # user-info file name
-USER_INFO_CONF = 'info.dat'
+USER_INFO_CONF = 'id.dat'
 
 
 def is_connected():
@@ -24,7 +25,7 @@ def is_connected():
     return True
 
 
-def login(store=True) -> (str, str):
+def login(store=True):
     """
     get account and password
     It will ask for account and password and stored on first time.
@@ -35,14 +36,14 @@ def login(store=True) -> (str, str):
     # user info file exists and not empty
     if path.exists(USER_INFO_CONF) and path.getsize(USER_INFO_CONF):
         with open(USER_INFO_CONF, 'rb') as f:
-            ans = [_.decode().strip('\n') for _ in f]
+            ans = base64.b64decode(f.read()).decode().split('\n')
             return ans[:2]
     else:
         with open(USER_INFO_CONF, 'wb') as f:
             account = input('请输入学号/帐号:\n')
             password = getpass.getpass('请输入密碼(无回显):\n')
             if store:
-                f.write('\n'.join([account, password]).encode())
+                f.write(base64.b64encode('\n'.join([account, password]).encode()))
             return account, password
 
 
@@ -91,7 +92,7 @@ def connect_internet(wired=True):
         if is_connected():
             print('network OK!')
         else:
-            print('network still has problems...')
+            print('network still has problems, retry...')
             if wired:
                 # try in another way
                 return connect_internet(False)
