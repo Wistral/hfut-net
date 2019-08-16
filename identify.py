@@ -50,9 +50,9 @@ def connect_internet(wired=True):
     """
     connect to Internet from inner school net
     """
-    if is_connected():
-        print('Already connect to Internet!')
-        return True
+#    if is_connected():
+#        print('Already connect to Internet!')
+#        return True
     # acqurie account and password
     account, psw = login()
     headers = {
@@ -84,20 +84,22 @@ def connect_internet(wired=True):
     }
     # make POST request
     html = requests.post(url, headers=headers, data=data)
-    res = BeautifulSoup(html.text, 'lxml')
+    res = BeautifulSoup(html.text, 'html.parser')
     msg = res.title.string
     if msg == '登录成功':
-        print('login successfully!')
+        print('Login successfully!')
         if is_connected():
-            print('network OK!')
+            print('Network OK!')
         else:
-            print('network still has problems...')
+            print('Network still has problems...')
             if wired:
                 # try in another way
                 return connect_internet(False)
         return True
+    elif msg == '信息返回':
+        print('Already login!')
     else:
-        print('log in failed! Error message:\n', msg)
+        print('Log in failed! Error message:\n', msg)
         # clear incorrect info
         with open(USER_INFO_CONF, 'w') as f:
             pass
