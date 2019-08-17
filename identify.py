@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
 import requests
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 from os import path
 import getpass
 import subprocess
@@ -24,7 +25,12 @@ def is_connected():
     return True
 
 
-def login(store=True) -> (str, str):
+def internet_init():
+    subprocess.call(['ip', 'link', 'set', 'eth0', 'up'])
+    subprocess.call(['dhclient'])
+    
+
+def login(store=True):
     """
     get account and password
     It will ask for account and password and stored on first time.
@@ -50,9 +56,10 @@ def connect_internet(wired=True):
     """
     connect to Internet from inner school net
     """
-#    if is_connected():
-#        print('Already connect to Internet!')
+    if is_connected():
+        print('Already connect to Internet!')
 #        return True
+    internet_init()
     # acqurie account and password
     account, psw = login()
     headers = {
