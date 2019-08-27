@@ -10,3 +10,14 @@ python3 identify.py [wired | wireless]
 ```sh
 bash hotspot-set-up.bash
 ```
+
+### Build release
+- Dependency
+  - requests
+  - beautifulsoup4
+  - pyinstaller
+  `pip install pyinstaller beautifulsoup4 requests`
+- command
+  ```sh
+   pyinstaller -F identify.py -n hfut-net --icon ~/Pictures/university_128px_1147037_easyicon.net.ico
+   ```
