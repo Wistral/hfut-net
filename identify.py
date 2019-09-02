@@ -5,10 +5,11 @@ from os import path
 import getpass
 import subprocess
 import sys
+import base64
 
 
 # user-info file name
-USER_INFO_CONF = 'info.dat'
+USER_INFO_CONF = 'id.dat'
 
 
 def is_connected():
@@ -29,7 +30,7 @@ def internet_init():
     subprocess.call(['ip', 'link', 'set', 'eth0', 'up'])
     subprocess.call(['dhclient'])
     
-
+    
 def login(store=True):
     """
     get account and password
@@ -41,14 +42,14 @@ def login(store=True):
     # user info file exists and not empty
     if path.exists(USER_INFO_CONF) and path.getsize(USER_INFO_CONF):
         with open(USER_INFO_CONF, 'rb') as f:
-            ans = [_.decode().strip('\n') for _ in f]
+            ans = base64.b64decode(f.read()).decode().split('\n')
             return ans[:2]
     else:
         with open(USER_INFO_CONF, 'wb') as f:
             account = input('请输入学号/帐号:\n')
             password = getpass.getpass('请输入密碼(无回显):\n')
             if store:
-                f.write('\n'.join([account, password]).encode())
+                f.write(base64.b64encode('\n'.join([account, password]).encode()))
             return account, password
 
 
@@ -98,7 +99,7 @@ def connect_internet(wired=True):
         if is_connected():
             print('Network OK!')
         else:
-            print('Network still has problems...')
+            print('network still has problems, retry...')
             if wired:
                 # try in another way
                 return connect_internet(False)
