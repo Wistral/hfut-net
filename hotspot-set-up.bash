@@ -15,7 +15,7 @@ case "${architecture}" in
         && wget -c https://launchpad.net/~nilarimogard/+archive/ubuntu/webupd8/+files/ap-hotspot_0.3-1~webupd8~4_all.deb \
         && sudo dpkg -i hostapd_1.0-3ubuntu2.1_${architecture}.deb ap-hotspot_0.3-1~webupd8~4_all.deb \
         && sudo apt-mark hold ap-hotspot \
-        && echo "hold ap-hotspot"
+        && echo "hold ap-hotspot" \
         && sudo apt-get install -fy mpdcron \
         && echo 'Install dependency successfully!')
         echo 'Start hotspot configuration...'
